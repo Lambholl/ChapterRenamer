@@ -87,8 +87,8 @@ class Chapter(object):
 
 def guiProceed():
     chapterFiles_original = filedialog.askopenfilenames(title='选择章节文件 - LPSub Chapters Proceeder by Lambholl', initialdir=__file__, filetypes=[('章节文件', '.txt')])
-    for i in chapterFiles_original:
-        try:
+    try:
+        for i in chapterFiles_original:
             with open(i, 'r', encoding='utf-8') as fb:
                 textOriginal = fb.read()
             chaps = Chapter(textOriginal)
@@ -99,9 +99,9 @@ def guiProceed():
                 guiProceed()
             else:
                 os._exit(1)
-        except Exception as e:
-            messagebox.showerror('错误', str(e))
-            guiProceed()
+    except Exception as e:
+        messagebox.showerror('错误', str(e))
+        guiProceed()
 
 if __name__ == '__main__':
     import tkinter as tk
