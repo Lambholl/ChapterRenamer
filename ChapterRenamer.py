@@ -95,10 +95,10 @@ def guiProceed():
             chaps.rename()
             with open(i, 'w', encoding='utf-8') as fb:
                 fb.write(chaps.produced)
-            if messagebox.askyesno('处理成功', '处理后的文件已覆盖原文件\n是否继续处理别的文件？'):
-                guiProceed()
-            else:
-                os._exit(1)
+        if messagebox.askyesno('处理成功', '处理后的文件已覆盖原文件\n是否继续处理别的文件？'):
+            guiProceed()
+        else:
+            os._exit(1)
     except Exception as e:
         messagebox.showerror('错误', str(e))
         guiProceed()
