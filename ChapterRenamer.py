@@ -86,7 +86,7 @@ class Chapter(object):
         self.produced = result
 
 def guiProceed():
-    chapterFiles_original = filedialog.askopenfilenames(title='选择章节文件', initialdir=__file__, filetypes=[('章节文件', '.txt')])
+    chapterFiles_original = filedialog.askopenfilenames(title='选择章节文件 - LPSub Chapters Proceeder by Lambholl', initialdir=__file__, filetypes=[('章节文件', '.txt')])
     for i in chapterFiles_original:
         try:
             with open(i, 'r', encoding='utf-8') as fb:
