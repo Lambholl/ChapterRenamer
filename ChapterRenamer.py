@@ -21,79 +21,79 @@ class Chapter(object):
         for i in re.findall(p2, text):
             chapterNames.append(i[1])
         self.chapterNames = chapterNames
-        self.OP, self.ED = None, None
-        self.OP_range, self.ED_range = OP_range, ED_range
-        self.OP_at_end = OP_at_end
+        self.__OP, self.__ED = None, None
+        self.__OP_range, self.__ED_range = OP_range, ED_range
+        self.__OP_at_end = OP_at_end
     
     def seekForOP(self):
-        if self.OP_at_end:
+        if self.__OP_at_end:
             for i in range(len(self.times)-1, -1, -1):
                 if self.times[i][2] < 17: break
-                elif self.OP_range[0] <= self.times[i][2]*60+self.times[i][3]-self.times[i-1][2]*60-self.times[i-1][3] <= self.OP_range[1]:
-                    self.OP = i; break
+                elif self.__OP_range[0] <= self.times[i][2]*60+self.times[i][3]-self.times[i-1][2]*60-self.times[i-1][3] <= self.__OP_range[1]:
+                    self.__OP = i; break
         else:
             for i in range(len(self.times)):
                 if self.times[i][2] > 8: break
-                elif self.OP_range[0] <= self.times[i+1][2]*60+self.times[i+1][3]-self.times[i][2]*60-self.times[i][3] <= self.OP_range[1]:
-                    self.OP = i; break
+                elif self.__OP_range[0] <= self.times[i+1][2]*60+self.times[i+1][3]-self.times[i][2]*60-self.times[i][3] <= self.__OP_range[1]:
+                    self.__OP = i; break
 
     
     def seekForED(self):
         for i in range(len(self.times)-1, -1, -1):
             if self.times[i][2] < 17: break
-            elif self.ED_range[0] <= self.times[i][2]*60+self.times[i][3]-self.times[i-1][2]*60-self.times[i-1][3] <= self.ED_range[1]:
-                self.ED = i-1; break
+            elif self.__ED_range[0] <= self.times[i][2]*60+self.times[i][3]-self.times[i-1][2]*60-self.times[i-1][3] <= self.__ED_range[1]:
+                self.__ED = i-1; break
         
     def rename(self):
-        if self.OP_at_end:
+        if self.__OP_at_end:
             self.seekForOP()
         else:
             self.seekForOP(); self.seekForED()
-        if self.OP:
-            self.chapterNames[self.OP] = 'OP'
-            if not OP_at_end:
-                if self.OP == 1:
+        if self.__OP:
+            self.chapterNames[self.__OP] = 'OP'
+            if not self.__OP_at_end:
+                if self.__OP == 1:
                     self.chapterNames[0] = 'Avant'
             else:
-                if self.OP >= 2:
+                if self.__OP >= 2:
                     self.chapterNames[0] = 'Avant'
-            if self.ED:
-                self.chapterNames[self.ED] = 'ED'
-                for i in range(self.ED-self.OP - 1):
-                    self.chapterNames[i + self.OP + 1] = 'Part ' + chr(65+i)
-                if len(self.chapterNames) > self.ED + 1:
+            if self.__ED:
+                self.chapterNames[self.__ED] = 'ED'
+                for i in range(self.__ED-self.__OP - 1):
+                    self.chapterNames[i + self.__OP + 1] = 'Part ' + chr(65+i)
+                if len(self.chapterNames) > self.__ED + 1:
                     self.chapterNames[-1] = 'Preview'
-                    if len(self.chapterNames) > self.ED + 2:
-                        self.chapterNames[-2] = 'Part ' + chr(64+self.ED-self.OP)
+                    if len(self.chapterNames) > self.__ED + 2:
+                        self.chapterNames[-2] = 'Part ' + chr(64+self.__ED-self.__OP)
             else:
-                if not OP_at_end:
+                if not self.__OP_at_end:
                     self.chapterNames[-1] = 'Preview'
-                    for i in range(len(self.chapterNames)-self.OP-2):
-                        self.chapterNames[i+self.OP+1] = 'Part ' + chr(65+i)
+                    for i in range(len(self.chapterNames)-self.__OP-2):
+                        self.chapterNames[i+self.__OP+1] = 'Part ' + chr(65+i)
                 else:
-                    if len(self.chapterNames) > self.OP + 1:
+                    if len(self.chapterNames) > self.__OP + 1:
                         self.chapterNames[-1] = 'Preview'
-                    if self.OP >= 2:
-                        for i in range(self.OP -1):
+                    if self.__OP >= 2:
+                        for i in range(self.__OP -1):
                             self.chapterNames[i+1] = 'Part ' + chr(65+i)
                     else:
-                        for i in range(self.OP):
+                        for i in range(self.__OP):
                             self.chapterNames[i] = 'Part ' + chr(65+i)
         else:
-            if self.ED:
-                self.chapterNames[self.ED] = 'ED'
-                if self.ED == 2:
+            if self.__ED:
+                self.chapterNames[self.__ED] = 'ED'
+                if self.__ED == 2:
                     noAvant = True
                     self.chapterNames[0], self.chapterNames[1] = 'Part A', 'Part B'
                 else:
                     noAvant = False
                     self.chapterNames[0] = 'Avant'
-                    for i in range(self.ED-1):
+                    for i in range(self.__ED-1):
                         self.chapterNames[i+1] = 'Part ' + chr(65 + i)
-                if len(self.chapterNames) > self.ED + 1:
+                if len(self.chapterNames) > self.__ED + 1:
                     self.chapterNames[-1] = 'Preview'
-                    if len(self.chapterNames) > self.ED + 2:
-                        self.chapterNames[-2] = 'Part ' + chr(65 + self.ED - int(not noAvant))
+                    if len(self.chapterNames) > self.__ED + 2:
+                        self.chapterNames[-2] = 'Part ' + chr(65 + self.__ED - int(not noAvant))
             else:
                 if len(self.chapterNames) == 2:
                     self.chapterNames = ['Part A', 'Part B']
