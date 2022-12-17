@@ -2,7 +2,7 @@ import os, re
 
 class Chapter(object):
     
-    def __init__(self, text, OP_range=[87,93], ED_range=[87,93]):
+    def __init__(self, text, OP_range=[87,93], ED_range=[87,93], OP_at_end=False):
         if not isinstance(text, str):
             raise TypeError('Input must be a str containing Chapter Infos.')
         elif not isinstance(OP_range, (list, tuple)):
@@ -23,12 +23,20 @@ class Chapter(object):
         self.chapterNames = chapterNames
         self.OP, self.ED = None, None
         self.OP_range, self.ED_range = OP_range, ED_range
+        self.OP_at_end = OP_at_end
     
     def seekForOP(self):
-        for i in range(len(self.times)):
-            if self.times[i][2] > 8: break
-            elif self.OP_range[0] <= self.times[i+1][2]*60+self.times[i+1][3]-self.times[i][2]*60-self.times[i][3] <= self.OP_range[1]:
-                self.OP = i; break
+        if self.OP_at_end:
+            for i in range(len(self.times)-1, -1, -1):
+                if self.times[i][2] < 17: break
+                elif self.OP_range[0] <= self.times[i][2]*60+self.times[i][3]-self.times[i-1][2]*60-self.times[i-1][3] <= self.OP_range[1]:
+                    self.OP = i; break
+        else:
+            for i in range(len(self.times)):
+                if self.times[i][2] > 8: break
+                elif self.OP_range[0] <= self.times[i+1][2]*60+self.times[i+1][3]-self.times[i][2]*60-self.times[i][3] <= self.OP_range[1]:
+                    self.OP = i; break
+
     
     def seekForED(self):
         for i in range(len(self.times)-1, -1, -1):
@@ -37,11 +45,18 @@ class Chapter(object):
                 self.ED = i-1; break
         
     def rename(self):
-        self.seekForOP(); self.seekForED()
+        if self.OP_at_end:
+            self.seekForOP()
+        else:
+            self.seekForOP(); self.seekForED()
         if self.OP:
             self.chapterNames[self.OP] = 'OP'
-            if self.OP == 1:
-                self.chapterNames[0] = 'Avant'
+            if not OP_at_end:
+                if self.OP == 1:
+                    self.chapterNames[0] = 'Avant'
+            else:
+                if self.OP >= 2:
+                    self.chapterNames[0] = 'Avant'
             if self.ED:
                 self.chapterNames[self.ED] = 'ED'
                 for i in range(self.ED-self.OP - 1):
@@ -51,9 +66,19 @@ class Chapter(object):
                     if len(self.chapterNames) > self.ED + 2:
                         self.chapterNames[-2] = 'Part ' + chr(64+self.ED-self.OP)
             else:
-                self.chapterNames[-1] = 'Preview'
-                for i in range(len(self.chapterNames)-self.OP-2):
-                    self.chapterNames[i+self.OP+1] = 'Part ' + chr(65+i)
+                if not OP_at_end:
+                    self.chapterNames[-1] = 'Preview'
+                    for i in range(len(self.chapterNames)-self.OP-2):
+                        self.chapterNames[i+self.OP+1] = 'Part ' + chr(65+i)
+                else:
+                    if len(self.chapterNames) > self.OP + 1:
+                        self.chapterNames[-1] = 'Preview'
+                    if self.OP >= 2:
+                        for i in range(self.OP -1):
+                            self.chapterNames[i+1] = 'Part ' + chr(65+i)
+                    else:
+                        for i in range(self.OP):
+                            self.chapterNames[i] = 'Part ' + chr(65+i)
         else:
             if self.ED:
                 self.chapterNames[self.ED] = 'ED'
@@ -86,7 +111,7 @@ class Chapter(object):
         self.produced = result
 
 def guiProceed():
-    chapterFiles_original = filedialog.askopenfilenames(title='选择章节文件 - LPSub Chapters Proceeder by Lambholl', initialdir=__file__, filetypes=[('章节文件', '.txt')])
+    chapterFiles_original = filedialog.askopenfilenames(title='[LP-Raws@LPSub] 选择章节文件 - Chapters Renamer by Lambholl', initialdir=__file__, filetypes=[('章节文件', '.txt')])
     try:
         for i in chapterFiles_original:
             with open(i, 'r', encoding='utf-8') as fb:
