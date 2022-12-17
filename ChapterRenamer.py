@@ -112,13 +112,14 @@ class Chapter(object):
 
 def guiProceed():
     chapterFiles_original = filedialog.askopenfilenames(title='[LP-Raws@LPSub] 选择章节文件 - Chapters Renamer by Lambholl', initialdir=__file__, filetypes=[('章节文件', '.txt')])
+    FirstOPatEnd = messagebox.askyesno('OP 是否处于结尾', '在你所选中的文件中，第一集的 OP 是否处于结尾处？')
     try:
-        for i in chapterFiles_original:
-            with open(i, 'r', encoding='utf-8') as fb:
+        for i in range(len(chapterFiles_original)):
+            with open(chapterFiles_original[i], 'r', encoding='utf-8') as fb:
                 textOriginal = fb.read()
-            chaps = Chapter(textOriginal)
+            chaps = Chapter(textOriginal, OP_at_end=True) if FirstOPatEnd and i==0 else Chapter(textOriginal)
             chaps.rename()
-            with open(i, 'w', encoding='utf-8') as fb:
+            with open(chapterFiles_original[i], 'w', encoding='utf-8') as fb:
                 fb.write(chaps.produced)
         if messagebox.askyesno('处理成功', '处理后的文件已覆盖原文件\n是否继续处理别的文件？'):
             guiProceed()
