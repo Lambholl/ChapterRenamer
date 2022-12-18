@@ -49,7 +49,7 @@ class Chapter(object):
             self.seekForOP()
         else:
             self.seekForOP(); self.seekForED()
-        if self.__OP:
+        if self.__OP != None:
             self.chapterNames[self.__OP] = 'OP'
             if not self.__OP_at_end:
                 if self.__OP == 1:
@@ -80,7 +80,7 @@ class Chapter(object):
                         for i in range(self.__OP):
                             self.chapterNames[i] = 'Part ' + chr(65+i)
         else:
-            if self.__ED:
+            if self.__ED != None:
                 self.chapterNames[self.__ED] = 'ED'
                 if self.__ED == 2:
                     noAvant = True
@@ -139,3 +139,5 @@ if __name__ == '__main__':
 
 # LPSub Chapters Proceeder
 # Written by Lambholl on 26 Dec., 2022
+# Updated last on 18 Dec., 2022
+# Version 1.1.1
