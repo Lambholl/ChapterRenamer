@@ -50,7 +50,7 @@ class Chapter(object):
         else:
             self.seekForOP(); self.seekForED()
         if self.__OP != None:
-            self.chapterNames[self.__OP] = 'OP'
+            self.chapterNames[self.__OP] = 'Opening'
             if not self.__OP_at_end:
                 if self.__OP == 1:
                     self.chapterNames[0] = 'Avant'
@@ -58,7 +58,7 @@ class Chapter(object):
                 if self.__OP >= 2:
                     self.chapterNames[0] = 'Avant'
             if self.__ED:
-                self.chapterNames[self.__ED] = 'ED'
+                self.chapterNames[self.__ED] = 'Ending'
                 for i in range(self.__ED-self.__OP - 1):
                     self.chapterNames[i + self.__OP + 1] = 'Part ' + chr(65+i)
                 if len(self.chapterNames) > self.__ED + 1:
@@ -81,7 +81,7 @@ class Chapter(object):
                             self.chapterNames[i] = 'Part ' + chr(65+i)
         else:
             if self.__ED != None:
-                self.chapterNames[self.__ED] = 'ED'
+                self.chapterNames[self.__ED] = 'Ending'
                 if self.__ED == 2:
                     noAvant = True
                     self.chapterNames[0], self.chapterNames[1] = 'Part A', 'Part B'
@@ -138,6 +138,6 @@ if __name__ == '__main__':
     guiProceed()
 
 # LPSub Chapters Proceeder
-# Written by Lambholl on 26 Dec., 2022
-# Updated last on 18 Dec., 2022
-# Version 1.1.1
+# Written by Lambholl on 11 July, 2022
+# Updated last on 11 July, 2023
+# Version 1.1.2
